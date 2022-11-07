@@ -13,8 +13,11 @@ services:
       - 80:80
       - 443:443
     volumes:
-     #Podman
+     ##Podman
       - /run/podman/podman.sock:/var/run/docker.sock:ro
+      ##Rootless Podman
+      #- /run/user/1000/podman/podman.sock:/var/run/docker.sock:ro
+      ##Docker
       #- /var/run/docker.sock:/var/run/docker.sock:ro
       # Map the static configuration into the container
       - ./traefik-v2-https-ssl-localhost/config/static.yml:/etc/traefik/traefik.yml:ro
@@ -24,6 +27,11 @@ services:
       - ./traefik-v2-https-ssl-localhost/certs:/etc/certs:ro
     networks:
       - web
+      #Podman Privileges
+    #command:
+    #  - "--security-opt label=disable"
+    #privileged: true   
+
   mariadb:
     image: docker.io/bitnami/mariadb:latest
     env_file:
@@ -82,6 +90,7 @@ services:
       DB_PORT: 3306
       DB_USERNAME: $MARIADB_USER
       DB_DATABASE: $MARIADB_DATABASE
+      DB_PASSWORD: $MARIADB_PASSWORD
     labels:
         # Enable this container to be mapped by traefik
       # For more information, see: https://docs.traefik.io/providers/docker/#exposedbydefault
