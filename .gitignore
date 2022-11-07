@@ -1,2 +1,4 @@
 # ignore 
 .env
+*.pem
+APP/
